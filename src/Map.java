@@ -2,10 +2,12 @@ import java.util.List;
 
 public class Map {
 
-    Node[][] map;
+  private   Node[][] map;
   public static int row;
   public static int col;
     int counter = 0;
+
+
 
     public Map(int col, int row) {
 
@@ -29,7 +31,7 @@ public class Map {
         for (int i = 0; i < row; i++)
             for (int j = 0; j < col; j++) {
                 if(elements.size() !=0)
-                map[i][j] = new Node(elements.get(0));
+                map[i][j] = new Node(i,j, elements.get(0));
                 elements.remove(0);
 
             }
@@ -46,22 +48,28 @@ public class Map {
     void findNeighbors(Map map, List<Edge> list, int row, int col) {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                if (!map.getNode(i, j).isSouth() && i!=row-1) {
+                if (!map.getNode(i, j).isBorderSouth() && i!=row-1) {
                     list.add(new Edge(map.getNode(i, j), map.getNode(i+1, j)));
+                    System.out.println(((1+i) +" " + j + "\n"));
                 }
-               // if (!map.getNode(i, j).isWest()&& i!=0) {
-                //    list.add(new Edge(map.getNode(i, j), map.getNode(i - 1, j)));
-                //}
-             //   if (!map.getNode(i, j).isNorth() && j!=0) {
-               //     list.add(new Edge(map.getNode(i, j), map.getNode(i, j - 1)));
-                //}
-                if (!map.getNode(i, j).isEast() && j!=col-1) {
+                if (!map.getNode(i, j).isBorderEast() && j!=col-1) {
                     list.add(new Edge(map.getNode(i, j), map.getNode(i , j+1)));
+                    System.out.println(i +" " + (j+1) +  "\n");
                 }
+
+              /**  if (!map.getNode(i,j).isBorderWest() && i!=0){
+                    list.add(new Edge(map.getNode(i, j), map.getNode(i , j-1)));
+                }
+
+                if (!map.getNode(i,j).isBorderNorth() && j!=0){
+                    list.add(new Edge(map.getNode(i, j), map.getNode(i-1 , j)));
+                }*/
             }
         }
 
     }
 
-
+    public Node[][] getMap() {
+        return map;
+    }
 }

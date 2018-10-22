@@ -1,52 +1,113 @@
+import java.util.Objects;
+
 public class Node {
 
-    boolean west;
-    boolean east;
-    boolean north;
-    boolean south;
+    boolean borderWest;
+    boolean borderEast;
+    boolean borderNorth;
+    boolean borderSouth;
     boolean artifact;
+    boolean visited;
+    boolean wrong;
+
+    private int x;
+    private int y;
 
 
-    public Node(int item) {
+    public Node(int x, int y, int item) {
+//        BigInteger big = BigInteger.valueOf(item);
+//        this.artifact = big.testBit(5);
         if (item >= 16) {
             item -= 16;
             this.artifact = true;
         }
         if (item >= 8) {
             item -= 8;
-            this.west = true;
+            this.borderWest = true;
         }
         if (item >= 4) {
             item -= 4;
-            this.south = true;
+            this.borderSouth = true;
         }
         if (item >= 2) {
             item -= 2;
-            this.east = true;
+            this.borderEast = true;
         }
         if (item >= 1) {
-            this.north = true;
+            this.borderNorth = true;
         }
+        this.x=x;
+        this.y=y;
     }
 
-    public boolean isEast() {
-        return east;
+    public boolean isBorderEast() {
+        return borderEast;
     }
 
     public boolean isArtifact() {
         return artifact;
     }
 
-    public boolean isNorth() {
-        return north;
+    public boolean isBorderNorth() {
+        return borderNorth;
     }
 
-    public boolean isSouth() {
-        return south;
+    public boolean isBorderSouth() {
+        return borderSouth;
     }
 
-    public boolean isWest() {
-        return west;
+    public boolean isBorderWest() {
+        return borderWest;
     }
 
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
+    public boolean isWrong() {
+        return wrong;
+    }
+
+    public void setWrong(boolean wrong) {
+        this.wrong = wrong;
+    }
+
+    public void setArtifact(boolean artifact) {
+        this.artifact = artifact;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Node node = (Node) o;
+        return x == node.x &&
+                y == node.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
 }

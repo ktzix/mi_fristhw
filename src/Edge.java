@@ -7,5 +7,11 @@ public class Edge {
         this.b = b;
     }
 
+    public Node getA() {
+        return a;
+    }
 
+    public Node getB() {
+        return b;
+    }
 }
