@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Graph<T,V> {
+public class Graph<T, V> {
 
     private Set<Node<T>> nodes = new HashSet<>();
     private Set<Edge<T>> edges = new HashSet<>();
@@ -38,6 +38,15 @@ public class Graph<T,V> {
             }
         }
         return edgesByNode;
+    }
+
+    public Node<T> getNodeByTag(String tag) {
+        for (Node<T> node :   nodes) {
+            if (tag.equals(node.getTag())) {
+                return node;
+            }
+        }
+        return null;
     }
 
     public Set<Node<T>> getNodes() {
