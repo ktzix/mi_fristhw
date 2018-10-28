@@ -1,7 +1,9 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+package hu.bme.jschneid.v1;
+
+import hu.bme.jschneid.common.Edge;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +19,24 @@ public class Main {
     static int ArtifactCounter = 0;
    static List<Edge> edgeList =new ArrayList<Edge>();
 
+   public static String INPUT = "10 9 7\n" +
+           "8 0 19\n" +
+           "12 4 2\n" +
+           "1\n";
+
+
+    /**
+     * ‎10 9 7
+     * 8 0 19
+     * 12 4 2
+     * 1
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
 
-       readStream(System.in);
-//       readStream(( R);
+//       readStream(System.in);
+       readStream(new ByteArrayInputStream(INPUT.getBytes(StandardCharsets.UTF_8)));
 
 
 
@@ -76,9 +92,9 @@ public class Main {
 
     }
 
-   /** List<Node> queue = new ArrayList<>();
+   /** List<hu.bme.jschneid.v1.Node> queue = new ArrayList<>();
 
-    void BFS( Node node) {
+    void BFS( hu.bme.jschneid.v1.Node node) {
 
 
         if (!node.isVisited()) {
@@ -97,7 +113,7 @@ public class Main {
                         edgeList.remove(iter+1);
                         BFS(edgeList.get(iter).getA());
                     }
-                    Node e = edgeList.get(iter+1).getA();
+                    hu.bme.jschneid.v1.Node e = edgeList.get(iter+1).getA();
                     if (!node.visited) {
                         e.visited = true;
                         queue.add(e);

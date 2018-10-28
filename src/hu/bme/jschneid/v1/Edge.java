@@ -1,3 +1,7 @@
+package hu.bme.jschneid.v1;
+
+import hu.bme.jschneid.v1.Node;
+
 public class Edge {
 
     Node a, b;

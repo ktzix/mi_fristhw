@@ -1,3 +1,7 @@
+package hu.bme.jschneid.v1;
+
+import hu.bme.jschneid.v1.Node;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,6 +21,7 @@ public class RouteFinder {
     private int columnCount;
 
     private java.util.Map<Node, AtomicInteger> visitedCounter = new HashMap<>();
+    private java.util.Map<Node,java.util.Map<Direction, AtomicInteger>> visitedDirectionCounter = new HashMap<>();
     private java.util.Map<Node, Set<Node>> visitedNodes = new HashMap<>();
 
 
@@ -46,10 +51,11 @@ public class RouteFinder {
 
     public boolean searchRoute(
             Node from,
-            Node current,
+           final  Node current,
             Direction fromDirection
     ) throws Exception {
 
+        addNodeVisitedDirection(from,fromDirection);
         if( from != null ){
             addNodeVisitedFromNode(from,current);;
         }
@@ -71,7 +77,16 @@ public class RouteFinder {
             return true;
         }
 
-        for (Direction direction : Direction.values()) {
+
+        List<Direction> directions = new ArrayList<>(Arrays.asList(Direction.values()));
+        directions.sort((o1, o2) -> {
+            int o1VisitedCount = getDirectionVisisted(current,o1);
+            int o2VisitedCount = getDirectionVisisted(current,o2);
+            return o1VisitedCount - o2VisitedCount;
+        });
+
+
+        for (Direction direction : directions) {
             // if we are in start position
             if (this.isFirstNode(current) && direction == Direction.NORD) {
                 // skip this direction
@@ -81,7 +96,7 @@ public class RouteFinder {
             if(direction == fromDirection){
                 continue;
             }
-            if (RouteFinder.canGoInDirection(current, direction)) {
+            if (canGoInDirection(current, direction)) {
                 Node next = getNextNode(current, direction);
 
 //                if ( isNodeVisitedFromNode(current,next)){
@@ -101,6 +116,8 @@ public class RouteFinder {
         }
         return false;
     }
+
+
 
     private Node getNextNode(Node current, Direction direction) throws Exception {
         Node result = null;
@@ -134,21 +151,21 @@ public class RouteFinder {
     }
 
 
-    public static boolean canGoInDirection(Node node, Direction direction) throws Exception {
+    private boolean canGoInDirection(Node node, Direction direction) throws Exception {
         boolean result;
         switch (direction) {
 
             case NORD:
-                result = !node.isBorderNorth();
+                result = !node.isBorderNorth() && ( (node.getY() -1) > -1 );
                 break;
             case WEST:
-                result = !node.isBorderWest();
+                result = !node.isBorderWest() &&  ((node.getX()-1 ) > -1 ) ;
                 break;
             case SOUTH:
-                result = !node.isBorderSouth();
+                result = !node.isBorderSouth() && ( (node.getY() +1) < this.rowCount );
                 break;
             case EAST:
-                result = !node.isBorderEast();
+                result = !node.isBorderEast() &&  ((node.getX()+1 ) < this.columnCount ) ;
                 break;
             default:
                 throw new Exception("Invalid direction" + direction);
@@ -189,6 +206,20 @@ public class RouteFinder {
             return visitedNodes.get(current).contains(node);
         }
         return false;
+    }
+   private void addNodeVisitedDirection(Node current,Direction direction ){
+       visitedDirectionCounter.putIfAbsent(current, new HashMap<>());
+       visitedDirectionCounter.get(current).putIfAbsent(direction, new AtomicInteger(0));
+       visitedDirectionCounter.get(current).get(direction).incrementAndGet();
+    }
+
+    private int getDirectionVisisted(Node current,Direction direction ){
+        if ( this.visitedDirectionCounter.containsKey(current)){
+            if ( visitedDirectionCounter.get(current).containsKey(direction)){
+                return visitedDirectionCounter.get(current).get(direction).get();
+            }
+        }
+        return 0;
     }
 
     public static enum Direction {

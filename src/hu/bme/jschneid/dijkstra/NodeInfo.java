@@ -1,23 +1,25 @@
 package hu.bme.jschneid.dijkstra;
 
+import hu.bme.jschneid.common.Node;
+
 public class NodeInfo {
 
-    private Integer nodeId;
+    private Node node;
     private Long distance;
-    private Integer prevNode;
+    private Node prevNode;
 
 
-    public NodeInfo(Integer nodeId, Long distance) {
-        this.nodeId = nodeId;
+    public NodeInfo(Node node, Long distance) {
+        this.node = node;
         this.distance = distance;
     }
 
-    public Integer getNodeId() {
-        return nodeId;
+    public Node getNode() {
+        return node;
     }
 
-    public void setNodeId(Integer nodeId) {
-        this.nodeId = nodeId;
+    public void setNode(Node nodeId) {
+        this.node = nodeId;
     }
 
     public Long getDistance() {
@@ -28,18 +30,18 @@ public class NodeInfo {
         this.distance = distance;
     }
 
-    public Integer getPrevNode() {
+    public Node getPrevNode() {
         return prevNode;
     }
 
-    public void setPrevNode(Integer prevNode) {
+    public void setPrevNode(Node prevNode) {
         this.prevNode = prevNode;
     }
 
     @Override
     public String toString() {
         return "NodeInfo{" +
-                "nodeId=" + nodeId +
+                "node=" + node +
                 ", distance=" + distance +
                 ", prevNode=" + prevNode +
                 '}';

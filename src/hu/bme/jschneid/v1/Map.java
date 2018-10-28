@@ -1,3 +1,5 @@
+package hu.bme.jschneid.v1;
+
 import java.util.List;
 
 public class Map {
@@ -58,11 +60,11 @@ public class Map {
                 }
 
               /**  if (!map.getNode(i,j).isBorderWest() && i!=0){
-                    list.add(new Edge(map.getNode(i, j), map.getNode(i , j-1)));
+                    list.add(new hu.bme.jschneid.v1.Edge(map.getNode(i, j), map.getNode(i , j-1)));
                 }
 
                 if (!map.getNode(i,j).isBorderNorth() && j!=0){
-                    list.add(new Edge(map.getNode(i, j), map.getNode(i-1 , j)));
+                    list.add(new hu.bme.jschneid.v1.Edge(map.getNode(i, j), map.getNode(i-1 , j)));
                 }*/
             }
         }

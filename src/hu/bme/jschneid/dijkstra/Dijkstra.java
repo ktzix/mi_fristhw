@@ -1,5 +1,9 @@
 package hu.bme.jschneid.dijkstra;
 
+
+import hu.bme.jschneid.common.Edge;
+import hu.bme.jschneid.common.Node;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -11,24 +15,16 @@ public class Dijkstra {
     private Node start;
     private List<Node> nodes;
     private List<Edge> edges;
-
-    private Map<Integer, NodeInfo> info;
-
-    private Map<Integer, List<Edge>> adjacencyListMap;
-
-    private Map<Integer, Node> nodeMap;
-
+    private Map<Node, NodeInfo> info;
+    private Map<Node, List<Edge>> adjacencyListMap;
     private Set<Node> unvisited;
 
+    @SuppressWarnings("WeakerAccess")
     public Dijkstra(List<Node> nodes, List<Edge> edges, Node start) {
         this.start = start;
         this.nodes = nodes;
         this.edges = edges;
 
-        this.nodeMap = new HashMap<>();
-        for (Node node : nodes) {
-            nodeMap.put(node.getId(), node);
-        }
 
         unvisited = new HashSet<>(nodes);
 
@@ -42,7 +38,7 @@ public class Dijkstra {
         for (Node node :
                 nodes) {
             Long distance = start.getId().equals(node.getId()) ? 0 : INFINITY;
-            info.put(node.getId(), new NodeInfo(node.getId(), distance));
+            info.put(node, new NodeInfo(node, distance));
         }
     }
 
@@ -52,11 +48,12 @@ public class Dijkstra {
     private void prepareAdjacencyLists() {
         adjacencyListMap = new HashMap<>();
         for (Edge edge : edges) {
-            adjacencyListMap.putIfAbsent(edge.getNodeId(), new ArrayList<>());
-            adjacencyListMap.get(edge.getNodeId()).add(edge);
+            adjacencyListMap.putIfAbsent(edge.getNode(), new ArrayList<>());
+            adjacencyListMap.get(edge.getNode()).add(edge);
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void doDijkstra() {
         doDijkstra(start);
     }
@@ -67,29 +64,29 @@ public class Dijkstra {
         unvisited.remove(node);
 
         // get the list of neighbour edges
-        List<Edge> neighbours = this.adjacencyListMap.getOrDefault(node.getId(), Collections.emptyList());
+        List<Edge> neighbours = this.adjacencyListMap.getOrDefault(node, Collections.emptyList());
 
         // get the distance of the actual node from the staring node
-        long currentDistance = info.get(node.getId()).getDistance();
+        long currentDistance = info.get(node).getDistance();
 
         // calculate distance to neighbours
         for (Edge edge : neighbours) {
-            NodeInfo oppositeNodeInfo = info.get(edge.getOppositeNodeIid());
+            NodeInfo oppositeNodeInfo = info.get(edge.getOppositeNode());
             long savedOppositeNodeDistance = oppositeNodeInfo.getDistance();
             long actualOppositeNodeDistance = currentDistance + edge.getDistance();
             // if we have found a shorter node, update the info
             if (actualOppositeNodeDistance < savedOppositeNodeDistance) {
                 oppositeNodeInfo.setDistance(actualOppositeNodeDistance);
-                oppositeNodeInfo.setPrevNode(node.getId());
+                oppositeNodeInfo.setPrevNode(node);
             }
         }
 
 
         // find neighbour with shortest way from the start point
-        List<Integer> listOfOppositeNodeIds = neighbours.stream().map(Edge::getOppositeNodeIid).collect(Collectors.toList());
+        List<Node> listOfOppositeNodeIds = neighbours.stream().map(Edge::getOppositeNode).collect(Collectors.toList());
         List<NodeInfo> neighbourNodeInfos = info.values().stream()
-                .filter(nodeInfo -> listOfOppositeNodeIds.contains(nodeInfo.getNodeId()))
-                .filter(nodeInfo -> unvisited.contains(nodeMap.get(nodeInfo.getNodeId())))
+                .filter(nodeInfo -> listOfOppositeNodeIds.contains(nodeInfo.getNode()))
+                .filter(nodeInfo -> unvisited.contains(nodeInfo.getNode()))
                 .sorted((o1, o2) -> (int) (o1.getDistance() - o2.getDistance()))
                 .collect(Collectors.toList());
 
@@ -98,7 +95,7 @@ public class Dijkstra {
         // select shortest distance
         if (!neighbourNodeInfos.isEmpty()) {
             NodeInfo info = neighbourNodeInfos.get(0);
-            oppositeNodeWithShortestDistanceFromStartPoint = nodeMap.get(info.getNodeId());
+            oppositeNodeWithShortestDistanceFromStartPoint = info.getNode();
         }
 
         if (oppositeNodeWithShortestDistanceFromStartPoint != null) {
@@ -107,7 +104,8 @@ public class Dijkstra {
 
     }
 
-    public Map<Integer, NodeInfo> getInfo() {
+    @SuppressWarnings("WeakerAccess")
+    public Map<Node, NodeInfo> getInfo() {
         return info;
     }
 
@@ -115,14 +113,12 @@ public class Dijkstra {
         String[] nodeNames = {"a", "b", "c", "d", "e"};
         List<Node> nodes = new ArrayList<>();
         Map<String, Node> byTag = new HashMap<>();
-        Map<Integer, Node> byId = new HashMap<>();
         int i = 0;
         for (String nodeName : nodeNames) {
             Node node = new Node(i, nodeName);
             nodes.add(node);
             i++;
             byTag.put(nodeName,node);
-            byId.put(node.getId(),node);
         }
 
         List<Edge> edges = new ArrayList<>();
@@ -150,12 +146,12 @@ public class Dijkstra {
         Dijkstra dijkstra = new Dijkstra(nodes,edges,byTag.get("a"));
         dijkstra.doDijkstra();
 
-        Map<Integer,NodeInfo> infoMap = dijkstra.getInfo();
+        Map<Node, NodeInfo> infoMap = dijkstra.getInfo();
 
         for (NodeInfo info :
                 infoMap.values()) {
-            Node from = byId.get(info.getNodeId());
-            Node prev = byId.get(info.getPrevNode());
+            Node from =info.getNode();
+            Node prev = info.getPrevNode();
 
             System.out.println( from.getTag() +","+info.getDistance() +","+( prev == null ? "": prev.getTag()));
         }
@@ -163,8 +159,8 @@ public class Dijkstra {
 
     }
 
-    private static void createEdge( List<Edge> edges,Map<String, Node> byTag , String a, String b, long distance){
-        edges.add(new Edge(byTag.get(a).getId(),byTag.get(b).getId(),distance));
+    private static void createEdge(List<Edge> edges, Map<String, Node> byTag , String a, String b, long distance){
+        edges.add(new Edge(byTag.get(a),byTag.get(b),distance));
     }
 
 

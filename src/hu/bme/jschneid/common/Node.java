@@ -1,11 +1,12 @@
-package hu.bme.jschneid.dijkstra;
+package hu.bme.jschneid.common;
 
 import java.util.Objects;
 
-public class Node {
+public class Node<T> {
 
     private Integer id;
     private String tag;
+    private T payload;
 
     public Node(Integer id) {
         this.id = id;
@@ -14,6 +15,12 @@ public class Node {
     public Node(Integer id, String tag) {
         this.id = id;
         this.tag = tag;
+    }
+
+    public Node(Integer id, String tag,T payload) {
+        this.id = id;
+        this.tag = tag;
+        this.payload = payload;
     }
 
     public Integer getId() {
@@ -30,6 +37,10 @@ public class Node {
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public T getPayload() {
+        return payload;
     }
 
     @Override

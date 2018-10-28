@@ -1,3 +1,5 @@
+package hu.bme.jschneid.v1;
+
 import java.util.Objects;
 
 public class Node {
@@ -15,8 +17,6 @@ public class Node {
 
 
     public Node(int x, int y, int item) {
-//        BigInteger big = BigInteger.valueOf(item);
-//        this.artifact = big.testBit(5);
         if (item >= 16) {
             item -= 16;
             this.artifact = true;
