@@ -19,11 +19,11 @@ public class Edge<T> {
     }
 
 
-    public Node getNode() {
+    public Node<T> getNode() {
         return node;
     }
 
-    public Node getOppositeNode() {
+    public Node<T> getOppositeNode() {
         return oppositeNode;
     }
 
@@ -32,17 +32,13 @@ public class Edge<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Edge edge = (Edge) o;
-        return (Objects.equals(node, edge.node) &&
-                Objects.equals(oppositeNode, edge.oppositeNode) )
-||
-        (Objects.equals(node, edge.oppositeNode) &&
-                Objects.equals(oppositeNode, edge.node) )
-        ;
+        Edge<?> edge = (Edge<?>) o;
+        return Objects.equals(node, edge.node) &&
+                Objects.equals(oppositeNode, edge.oppositeNode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(node, oppositeNode) + Objects.hash(oppositeNode, node);
+        return Objects.hash(node, oppositeNode);
     }
 }

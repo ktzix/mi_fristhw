@@ -2,14 +2,14 @@ package hu.bme.jschneid.dijkstra;
 
 import hu.bme.jschneid.common.Node;
 
-public class NodeInfo {
+public class DijkstraNodeDistance {
 
     private Node node;
     private Long distance;
     private Node prevNode;
 
 
-    public NodeInfo(Node node, Long distance) {
+    public DijkstraNodeDistance(Node node, Long distance) {
         this.node = node;
         this.distance = distance;
     }
@@ -18,8 +18,8 @@ public class NodeInfo {
         return node;
     }
 
-    public void setNode(Node nodeId) {
-        this.node = nodeId;
+    public void setNode(Node node) {
+        this.node = node;
     }
 
     public Long getDistance() {
@@ -40,7 +40,7 @@ public class NodeInfo {
 
     @Override
     public String toString() {
-        return "NodeInfo{" +
+        return "DijkstraNodeDistance{" +
                 "node=" + node +
                 ", distance=" + distance +
                 ", prevNode=" + prevNode +

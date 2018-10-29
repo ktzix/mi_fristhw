@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Graph<T, V> {
 
@@ -33,7 +35,7 @@ public class Graph<T, V> {
     public List<Edge> getEdges(Node node) {
         List<Edge> edgesByNode = new ArrayList<>();
         for (Edge edge : edges) {
-            if (isEdgeContainsNode(edge, node)) {
+            if ( edge.getNode().equals(node)) {
                 edgesByNode.add(edge);
             }
         }
@@ -43,6 +45,15 @@ public class Graph<T, V> {
     public Node<T> getNodeByTag(String tag) {
         for (Node<T> node :   nodes) {
             if (tag.equals(node.getTag())) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    public Node<T> getNodeById(Integer id) {
+        for (Node<T> node :   nodes) {
+            if (id.equals(node.getId())) {
                 return node;
             }
         }
@@ -62,6 +73,10 @@ public class Graph<T, V> {
             return false;
         }
         return node.equals(edge.getNode()) || node.equals(edge.getOppositeNode());
+    }
+
+    public List<Node > getChildren(Node node){
+        return getEdges(node).stream().map((Function<Edge, Node>) Edge::getOppositeNode).collect(Collectors.toList());
     }
 
     public V getPayload() {

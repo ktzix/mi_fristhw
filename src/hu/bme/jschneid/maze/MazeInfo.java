@@ -1,6 +1,6 @@
 package hu.bme.jschneid.maze;
 
-class MazeInfo{
+public class MazeInfo{
     private int itemCount;
 
     public MazeInfo(int itemCount) {

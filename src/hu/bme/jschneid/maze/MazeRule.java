@@ -2,7 +2,7 @@ package hu.bme.jschneid.maze;
 
 import java.math.BigInteger;
 
-class MazeRule {
+public class MazeRule {
 
     private int rules;
 

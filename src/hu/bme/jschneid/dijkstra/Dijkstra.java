@@ -7,20 +7,26 @@ import hu.bme.jschneid.common.Node;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Dijkstra {
+public class Dijkstra<T> {
 
 
     private static final Long INFINITY = Long.MAX_VALUE;
 
-    private Node start;
-    private List<Node> nodes;
-    private List<Edge> edges;
-    private Map<Node, NodeInfo> info;
-    private Map<Node, List<Edge>> adjacencyListMap;
-    private Set<Node> unvisited;
+    private Node<T> start;
+    private Collection<Node<T>> nodes;
+    private Collection<Edge> edges;
+    private Map<Node<T>, DijkstraNodeDistance> info;
+    private Map<Node<T>, List<Edge>> adjacencyListMap;
+    private Set<Node<T>> unvisited;
+
+    public static <T> Map<Node<T>, DijkstraNodeDistance> dijkstra(Collection<Node<T>> nodes, Collection<Edge<T>> edges, Node<T> start){
+        Dijkstra<T> dijkstra = new Dijkstra(nodes,edges,start);
+        dijkstra.doDijkstra();
+        return dijkstra.getInfo();
+    }
 
     @SuppressWarnings("WeakerAccess")
-    public Dijkstra(List<Node> nodes, List<Edge> edges, Node start) {
+    public Dijkstra(Collection<Node<T>> nodes, Collection<Edge> edges, Node<T> start) {
         this.start = start;
         this.nodes = nodes;
         this.edges = edges;
@@ -32,13 +38,12 @@ public class Dijkstra {
         prepareAdjacencyLists();
     }
 
-
     private void prepareNodeInfo() {
         info = new HashMap<>();
-        for (Node node :
+        for (Node<T> node :
                 nodes) {
             Long distance = start.getId().equals(node.getId()) ? 0 : INFINITY;
-            info.put(node, new NodeInfo(node, distance));
+            info.put(node, new DijkstraNodeDistance(node, distance));
         }
     }
 
@@ -58,8 +63,9 @@ public class Dijkstra {
         doDijkstra(start);
     }
 
-    private void doDijkstra(Node node) {
+    private void doDijkstra(Node<T> node) {
 
+        System.out.println("Dijkstra: " + node.getId());
         // remove from unvisited
         unvisited.remove(node);
 
@@ -71,30 +77,30 @@ public class Dijkstra {
 
         // calculate distance to neighbours
         for (Edge edge : neighbours) {
-            NodeInfo oppositeNodeInfo = info.get(edge.getOppositeNode());
-            long savedOppositeNodeDistance = oppositeNodeInfo.getDistance();
+            DijkstraNodeDistance oppositeDijkstraNodeDistance = info.get(edge.getOppositeNode());
+            long savedOppositeNodeDistance = oppositeDijkstraNodeDistance.getDistance();
             long actualOppositeNodeDistance = currentDistance + edge.getDistance();
             // if we have found a shorter node, update the info
             if (actualOppositeNodeDistance < savedOppositeNodeDistance) {
-                oppositeNodeInfo.setDistance(actualOppositeNodeDistance);
-                oppositeNodeInfo.setPrevNode(node);
+                oppositeDijkstraNodeDistance.setDistance(actualOppositeNodeDistance);
+                oppositeDijkstraNodeDistance.setPrevNode(node);
             }
         }
 
 
         // find neighbour with shortest way from the start point
-        List<Node> listOfOppositeNodeIds = neighbours.stream().map(Edge::getOppositeNode).collect(Collectors.toList());
-        List<NodeInfo> neighbourNodeInfos = info.values().stream()
-                .filter(nodeInfo -> listOfOppositeNodeIds.contains(nodeInfo.getNode()))
-                .filter(nodeInfo -> unvisited.contains(nodeInfo.getNode()))
+        List<Node> listOfOppositeNodeIds = neighbours.stream().map(Edge::getOppositeNode).collect(Collectors.toList() );
+        List<DijkstraNodeDistance> neighbourDijkstraNodeDistances = info.values().stream()
+                .filter(dijkstraNodeDistance -> listOfOppositeNodeIds.contains(dijkstraNodeDistance.getNode()))
+                .filter(dijkstraNodeDistance -> unvisited.contains(dijkstraNodeDistance.getNode()))
                 .sorted((o1, o2) -> (int) (o1.getDistance() - o2.getDistance()))
                 .collect(Collectors.toList());
 
 
-        Node oppositeNodeWithShortestDistanceFromStartPoint = null;
+        Node<T> oppositeNodeWithShortestDistanceFromStartPoint = null;
         // select shortest distance
-        if (!neighbourNodeInfos.isEmpty()) {
-            NodeInfo info = neighbourNodeInfos.get(0);
+        if (!neighbourDijkstraNodeDistances.isEmpty()) {
+            DijkstraNodeDistance info = neighbourDijkstraNodeDistances.get(0);
             oppositeNodeWithShortestDistanceFromStartPoint = info.getNode();
         }
 
@@ -105,13 +111,13 @@ public class Dijkstra {
     }
 
     @SuppressWarnings("WeakerAccess")
-    public Map<Node, NodeInfo> getInfo() {
+    public Map<Node<T>, DijkstraNodeDistance> getInfo() {
         return info;
     }
 
     public static void main(String[] args) {
         String[] nodeNames = {"a", "b", "c", "d", "e"};
-        List<Node> nodes = new ArrayList<>();
+        List<Node<Object>> nodes = new ArrayList<>();
         Map<String, Node> byTag = new HashMap<>();
         int i = 0;
         for (String nodeName : nodeNames) {
@@ -146,9 +152,9 @@ public class Dijkstra {
         Dijkstra dijkstra = new Dijkstra(nodes,edges,byTag.get("a"));
         dijkstra.doDijkstra();
 
-        Map<Node, NodeInfo> infoMap = dijkstra.getInfo();
+        Map<Node, DijkstraNodeDistance> infoMap = dijkstra.getInfo();
 
-        for (NodeInfo info :
+        for (DijkstraNodeDistance info :
                 infoMap.values()) {
             Node from =info.getNode();
             Node prev = info.getPrevNode();
