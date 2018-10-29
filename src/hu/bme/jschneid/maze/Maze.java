@@ -1,11 +1,8 @@
 package hu.bme.jschneid.maze;
 
 import hu.bme.jschneid.bfs.BFS;
-import hu.bme.jschneid.common.Edge;
 import hu.bme.jschneid.common.Graph;
 import hu.bme.jschneid.common.Node;
-import hu.bme.jschneid.dijkstra.Dijkstra;
-import hu.bme.jschneid.dijkstra.DijkstraNodeDistance;
 import hu.bme.jschneid.v1.Main;
 
 import java.util.*;
@@ -104,17 +101,6 @@ public class Maze {
 
         System.out.println("Item count: " + graph.getPayload().getItemCount());
 
-        Set<Node<MazeRule>> nodes = graph.getNodes();
-
-//        for (Node<MazeRule> node : nodes) {
-//            System.out.println("node: " + node.getId() + " " + (node.getPayload().isItem() ? "Item" : ""));
-//        }
-
-//        System.out.println("edges");
-//        for (Edge<MazeRule> edge : graph.getEdges()) {
-//            System.out.println("node: " + edge.getNode().getId() + " - " + edge.getOppositeNode().getId());
-//        }
-
         List<Node<MazeRule>> steps = new ArrayList<>();
 
         Node<MazeRule> startNode = graph.getNodeByTag("start");
@@ -129,12 +115,14 @@ public class Maze {
             BFS bfs = new BFS();
             bfs.search(graph, position);
 
+            //noinspection unchecked
             Node<MazeRule> nextPosition = findItemWithShortestDistance(bfs.getDistance(), items);
 
             if ( nextPosition == null ){
                 throw new Exception("route not found from position " + position.getId());
             }
 
+            //noinspection unchecked
             List<Node<MazeRule>> routeFromPositionToNextPosition = bfs.getPath(nextPosition);
         routeFromPositionToNextPosition.remove(0);
             steps.addAll(  routeFromPositionToNextPosition);
@@ -147,6 +135,7 @@ public class Maze {
 
         BFS bfs = new BFS();
         bfs.search(graph, position);
+        //noinspection unchecked
         List<Node<MazeRule>> routeFromPositionToNextPosition = bfs.getPath(exitNode);
         routeFromPositionToNextPosition.remove(0);
         steps.addAll(  routeFromPositionToNextPosition);
@@ -158,7 +147,7 @@ public class Maze {
     }
 
 
-    public static Node<MazeRule> findItemWithShortestDistance(Map<Node, Integer> dist, List<Node<MazeRule>> items) {
+    private static Node<MazeRule> findItemWithShortestDistance(Map<Node, Integer> dist, List<Node<MazeRule>> items) {
         Node<MazeRule> candidate = null;
         long distance = Integer.MAX_VALUE;
         for (Node<MazeRule> item : items) {
