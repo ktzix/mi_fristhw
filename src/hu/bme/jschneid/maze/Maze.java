@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 public class Maze {
 
 
+    public static final String START = "start";
+    public static final String EXIT = "exit";
+
     @SuppressWarnings("WeakerAccess")
     public static Graph<MazeRule, MazeInfo> parse(String mazeDefinition) {
         // split string to rows
@@ -37,9 +40,9 @@ public class Maze {
             for (int colIndex = 0; colIndex < colCount; colIndex++) {
                 String tag = "";
                 if (rowIndex == 0 && colIndex == 0) {
-                    tag = "start";
+                    tag = START;
                 } else if (rowIndex == (rowCount - 1) && colIndex == (colCount - 1)) {
-                    tag = "exit";
+                    tag = EXIT;
                 }
                 MazeRule rule = new MazeRule(rowIndex, colIndex, Integer.parseInt(cells[colIndex]));
                 Node<MazeRule> node = new Node<>(nodeId, tag, rule);
