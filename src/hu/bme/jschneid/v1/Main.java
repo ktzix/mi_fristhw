@@ -1,6 +1,11 @@
 package hu.bme.jschneid.v1;
 
 import hu.bme.jschneid.common.Edge;
+import hu.bme.jschneid.common.Graph;
+import hu.bme.jschneid.maze.Maze;
+import hu.bme.jschneid.maze.MazeInfo;
+import hu.bme.jschneid.maze.MazeRouteFinder;
+import hu.bme.jschneid.maze.MazeRule;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -10,7 +15,7 @@ import java.util.List;
 public class Main {
 
     public int[] items = null;
-    static String inputString;
+
     static String[] inputItems = null;
     static BufferedReader br = null;
     static List<Integer> listOfStrings = new ArrayList<Integer>();
@@ -35,8 +40,9 @@ public class Main {
      */
     public static void main(String[] args) throws Exception {
 
-//       readStream(System.in);
-       readStream(new ByteArrayInputStream(INPUT.getBytes(StandardCharsets.UTF_8)));
+     readStream(System.in);
+// readStream(new ByteArrayInputStream(INPUT.getBytes(StandardCharsets.UTF_8)));
+
 
 
 
@@ -46,22 +52,23 @@ public class Main {
     public static void readStream(InputStream stream) throws Exception {
 
         try {
+            String inputString;
+            boolean firstLine = true;
+            StringBuffer sb = new StringBuffer();
             br = new BufferedReader(new InputStreamReader(stream));
-            while ((inputString = br.readLine()) != null) {
+            while (!(inputString = br.readLine()).equals("")) {
 
-                inputItems = inputString.split(" ");
-
-
-                for (int i = 0; i < inputItems.length; i++) {
-
-                    listOfStrings.add(Integer.parseInt(inputItems[i]));
-                }
-
-                row++;
-
+                sb.append(inputString);
+                sb.append("\n");
             }
 
             br.close();
+
+
+            Graph<MazeRule, MazeInfo> graph = Maze.parse(sb.toString());
+            MazeRouteFinder mazeRouteFinder = new MazeRouteFinder();
+            mazeRouteFinder.findRoute(graph);
+            mazeRouteFinder.printActions();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,59 +76,14 @@ public class Main {
 
         }
 
-        row--;
-        col = (listOfStrings.size() - 1) / row;
 
-        ArtifactCounter = listOfStrings.get(listOfStrings.size() - 1);
 
-        listOfStrings.remove(listOfStrings.size() - 1);
-
-        Map map = new Map(col, row);
-        map.addElements(listOfStrings);
-
-        RouteFinder finder = new RouteFinder(map.getMap(),row,col, ArtifactCounter);
-
-        finder.search();
-        finder.printRoute();
-        //  map.findNeighbors(map, edgeList, row, col  );
-
-        //System.out.println(edgeList.size());
 
 
 
 
     }
 
-   /** List<hu.bme.jschneid.v1.Node> queue = new ArrayList<>();
-
-    void BFS( hu.bme.jschneid.v1.Node node) {
-
-
-        if (!node.isVisited()) {
-            node.setVisited(true);
-            queue.add(node);
-        }
-
-            for (int iter = 0; iter < edgeList.size(); iter++) {
-                while (edgeList.get(iter) != null) {
-                    if (edgeList.get((iter+1)) != null ) {
-                        if(edgeList.get(iter).getB().isArtifact()){
-                            queue.add(edgeList.get(iter).getB());
-                            edgeList.get(iter).getB().setVisited(true);
-                            BFS(edgeList.get(iter).getA());
-                        }
-                        edgeList.remove(iter+1);
-                        BFS(edgeList.get(iter).getA());
-                    }
-                    hu.bme.jschneid.v1.Node e = edgeList.get(iter+1).getA();
-                    if (!node.visited) {
-                        e.visited = true;
-                        queue.add(e);
-                    }
-                }
-            }
-
-    }*/
 
 
 }

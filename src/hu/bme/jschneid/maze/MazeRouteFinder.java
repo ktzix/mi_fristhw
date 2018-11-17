@@ -96,7 +96,13 @@ public class MazeRouteFinder {
 
     @SuppressWarnings("WeakerAccess")
     public void printActions(){
+        boolean first = true;
+
         for (Action action:    actions        ) {
+            if(first){
+                first =false;
+                continue;
+            }
             System.out.println(action.toString());
         }
     }

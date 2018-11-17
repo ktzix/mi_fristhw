@@ -26,6 +26,6 @@ public class Action  {
         if ( action == ActionType.Collect){
             return COLLECT;
         }
-        return node.getPayload().getRow() + " " + node.getPayload().getCol() + " ("+node.getId()+")";
+        return node.getPayload().getRow() + " " + node.getPayload().getCol();
     }
 }
